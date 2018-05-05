@@ -1,0 +1,28 @@
+# .gitignore for Intel Fortran Projects with Microsoft Visual Studio
+# see VisualStudio.gitignore and C++.gitignore in github/gitignore/ for the complete list
+# https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
+# https://github.com/github/gitignore/blob/master/C%2B%2B.gitignore
+
+*.sln
+*.u2d
+*.suo
+*.db
+*.db3
+*.pdb
+*.optrpt
+*.opendb
+*.vfproj
+*.mod
+*.obj
+*.o
+*.manifest
+*.rc
+*.res
+*.exe
+*.txt
+BuildLog.htm
+.vc/
+.vs/
+x64/
+Debug/
+Release/
