@@ -217,7 +217,7 @@ contains
             mjmax = 512 + 1
             mkmax = 512 + 1
         case default
-            stop "Unexpected GridSize"
+            error stop "Unexpected Grid-size"
         end select
     end subroutine set_grid_size
 
