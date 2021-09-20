@@ -149,13 +149,13 @@ contains
         time_interval = 1.0/dble(count_rate)
     end function get_time_measurement_resolusion
 
-    function get_current_time() result(currentTime)
+    function get_current_time() result(current_time_s)
         implicit none
         integer(int32) :: count, count_rate, count_max
-        real(real64) :: currentTime
+        real(real64) :: current_time_s
 
         call system_clock(count, count_rate, count_max)
-        currentTime = dble(count)/dble(count_rate)
+        current_time_s = dble(count)/dble(count_rate)
     end function get_current_time
 
     subroutine read_grid_parameter(mimax, mjmax, mkmax, imax, jmax, kmax)
