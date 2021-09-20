@@ -1,17 +1,16 @@
-!This program is Himeno benchmark problem written in Modern Fortran style.
-!In this program, global variables are eliminated
-!and some variable names and subroutine names are refined.
-!The execution performance is almost the same as the original version,
-!but it is about 2% slower in my environment (computer and compiler).
+!|This program is a Himeno benchmark problem written in Modern Fortran style.
+! In this program, global variables are eliminated,
+! and some variable names and subroutine names are refactored.
+! The execution performance is almost the same as the original version.
+! However, it is about 2% slower in my environment (computer and compiler).
 !
-!For the original version of the Himeno benchmark,
-!please refer to the URLs below:
-!http://accc.riken.jp/supercom/himenobmt/
-!http://accc.riken.jp/en/supercom/himenobmt/
+! For the original version of the Himeno benchmark,
+! please refer to the URLs below:
+! http://accc.riken.jp/supercom/himenobmt/
+! http://accc.riken.jp/en/supercom/himenobmt/
 !
-!This program is free open-source software distributed under LGPL version 2
-!or any later version, inheriting the license of the original version of the Himeno benchmark.
-
+! This program is free, open-source software distributed under LGPL version 2
+! or any later version, inheriting the original version of the Himeno benchmark.
 program HimenoBMTxp_F90
     use, intrinsic :: iso_fortran_env
     implicit none
@@ -20,13 +19,14 @@ program HimenoBMTxp_F90
     real(real32), dimension(:, :, :),       allocatable :: p
         !! pressure
     real(real32), dimension(:, :, :, :),    allocatable :: a
-        !! coefficient matrix for p(i+1), p(j+1), p(k+1), p(ijk)
+        !! coefficient matrix for p(i+1), p(j+1), p(k+1), p(i,j,k)
     real(real32), dimension(:, :, :, :),    allocatable :: b
         !! coefficient matrix for cross derivative terms
     real(real32), dimension(:, :, :, :),    allocatable :: c
         !! coefficient matrix for p(i-1), p(j-1), p(k-1)
     real(real32), dimension(:, :, :),       allocatable :: bnd
-        !! control variable for boundaries and objects
+        !! control variable for boundaries and objects. <br>
+        !! 1 in fluid and 0 on boundaries or in a object.
     real(real32), dimension(:, :, :),       allocatable :: src
         !! source term of Poisson equation
     real(real32), dimension(:, :, :),       allocatable :: wrk
@@ -42,8 +42,11 @@ program HimenoBMTxp_F90
 
     ! Parameters related to performance measurments
     real(real32), parameter :: FlopToMFlop = 1e-6
-    real(real32), parameter :: numFlopPerPoint = 34.0 ![operations]
-    real(real32), parameter :: MFlopsPenIII600 = 82.84 ![MFLOPS]
+        !! conversion coefficient from flops to mega flops
+    real(real32), parameter :: numFlopPerPoint = 34.0 ! [operations]
+        !! number of floating point number operations per grid point
+    real(real32), parameter :: MFlopsPenIII600 = 82.84 ! [MFLOPS]
+        !! reference performance (Mega flops) when using Pentium III 600 MHz
 
     call read_grid_parameter(mimax, mjmax, mkmax, imax, jmax, kmax)
 
@@ -142,6 +145,7 @@ program HimenoBMTxp_F90
 
 contains
 
+    !| get time measurement resolution of the system
     function get_time_measurement_resolution() result(time_interval)
         implicit none
         integer(int32) :: count, count_rate, count_max
@@ -151,6 +155,7 @@ contains
         time_interval = 1.0/dble(count_rate)
     end function get_time_measurement_resolution
 
+    !| get elapsed time in second from the reference time
     function get_current_time() result(current_time_s)
         implicit none
         integer(int32) :: count, count_rate, count_max
@@ -160,14 +165,21 @@ contains
         current_time_s = dble(count)/dble(count_rate)
     end function get_current_time
 
+    !| read problem (grid size) from standard input and set the number of grid points according to the grid size
     subroutine read_grid_parameter(mimax, mjmax, mkmax, imax, jmax, kmax)
         implicit none
         integer(int32), intent(inout) :: mimax
+            !! number of grid points in x direction (with padding)
         integer(int32), intent(inout) :: mjmax
+            !! number of grid points in y direction (with padding)
         integer(int32), intent(inout) :: mkmax
+            !! number of grid points in z direction (with padding)
         integer(int32), intent(inout) :: imax
+            !! number of grid points in x direction
         integer(int32), intent(inout) :: jmax
+            !! number of grid points in y direction
         integer(int32), intent(inout) :: kmax
+            !! number of grid points in z direction
 
         character(10) :: size
 
@@ -188,13 +200,18 @@ contains
 
     end subroutine read_grid_parameter
 
+    !| set the number of grid points according to the grid size
     subroutine set_grid_size(mimax, mjmax, mkmax, size)
         implicit none
         !&<
         integer(int32), intent(inout)   :: mimax
+            !! number of grid points in x direction (with padding)
         integer(int32), intent(inout)   :: mjmax
+            !! number of grid points in y direction (with padding)
         integer(int32), intent(inout)   :: mkmax
+            !! number of grid points in z direction (with padding)
         character(*),   intent(in)      :: size
+            !! grid size
         !&>
 
         select case (size)
@@ -223,16 +240,16 @@ contains
         end select
     end subroutine set_grid_size
 
+    !| solve Poisson equation using Jacobi method
     subroutine jacobi(p, error, a, b, c, bnd, src, wrk, num_iteration)
         implicit none
         !&<
-        real(real32),   intent(inout)   :: error
-            !! squared error
-
         real(real32),   intent(inout)   :: p(:, :, :)
             !! pressure
+        real(real32),   intent(inout)   :: error
+            !! squared error
         real(real32),   intent(in)      :: a(:, :, :, :)
-            !! coefficient matrix for p(i+1), p(j+1), p(k+1), p(ijk)
+            !! coefficient matrix for p(i+1), p(j+1), p(k+1), p(i,j,k)
         real(real32),   intent(in)      :: b(:, :, :, :)
             !! coefficient matrix for cross derivative term
         real(real32),   intent(in)      :: c(:, :, :, :)
@@ -251,6 +268,7 @@ contains
         integer(int32) :: i, j, k
         real(real32) :: p_new, dp
         real(real32), parameter :: rlx = 0.8 !relaxation parameter
+
         integer(int32), parameter :: x = 1
         integer(int32), parameter :: y = 2
         integer(int32), parameter :: z = 3
@@ -259,8 +277,6 @@ contains
         integer(int32), parameter :: yz = 2
         integer(int32), parameter :: zx = 3
 
-        !These variables are not necessary because the variables defined in the main routine can be referred.
-        !But, I recommend to declare from the viewpoint of subroutine completeness.
         integer(int32) :: imax
         integer(int32) :: jmax
         integer(int32) :: kmax
