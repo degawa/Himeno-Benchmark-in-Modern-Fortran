@@ -1,27 +1,26 @@
 # Himeno Benchmark in Modern Fortran
 
-This is a Modern Fortran program executing the Himeno Benchmark.
+This program is a Himeno benchmark problem written in Modern Fortran style.
 
 ## Descriptions
 
-This program is Himeno benchmark problem written in Modern Fortran style, achieving the same execution performance as the original version.  
-In this program, global variables are eliminated 
-and some variable names and subroutine names are refined.  
+This program is a Himeno benchmark problem written in Modern Fortran style, achieving almost the same execution performance as the original version.
+In this program, global variables are eliminated, and some variable names and subroutine names are refactored.
 
 ## Demo
 ![Demo](./Demo.png)
 
 ## Requirement
-Fortran 2003 or later.  
-This program is tested using Intel Fortran compiler for windows only.
+Fortran 2008 or later.
+This program is compiled using Intel oneAPI ver. 2021.1 and gfortran ver. 10.3.0 for windows.
 
 ## Usage
 
 1. compile the source code
-2. execute the created .exe file
-3. input Grid-size from a keyboard
-4. The program will be run during roughly 60 seconds
-5. Benchmark results will be displayed after an execution is successfully done
+1. execute the created .exe file
+1. input Grid-size from a keyboard
+1. The program will run for roughly 60 seconds
+1. Benchmark results will be displayed after execution is successfully done
 
 ## Installation
 git clone or simply download .f90 file
