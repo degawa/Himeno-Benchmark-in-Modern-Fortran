@@ -36,7 +36,7 @@ program HimenoBMTxp_F90
     integer(int32) :: mimax, mjmax, mkmax
     integer(int32) ::  imax,  jmax,  kmax !&
 
-    integer(int32) :: numItr
+    integer(int32) :: num_iteration
     real(real32) :: flop, mflops, score, error
     real(real64) :: time_begin_s, time_end_s, time_elapsed_s, dt
 
@@ -85,19 +85,19 @@ program HimenoBMTxp_F90
 
     ! Rehearsal measurment to estimate the number of iterations
     Rehearsal: block
-        numItr = 3
+        num_iteration = 3
         print *, " Start rehearsal measurement process."
         print *, " Measure the performance in 3 times."
 
         ! Jacobi iteration
         time_begin_s = get_current_time()
-        call jacobi(p, error, a, b, c, bnd, src, wrk, numItr)
+        call jacobi(p, error, a, b, c, bnd, src, wrk, num_iteration)
         time_end_s = get_current_time()
 
         time_elapsed_s = time_end_s - time_begin_s
         if (time_elapsed_s < dt) error stop "error : execution time is not correct. The grid size may be too small."
 
-        mflops = flop*FlopToMFlop/(time_elapsed_s/dble(numItr))
+        mflops = flop*FlopToMFlop/(time_elapsed_s/dble(num_iteration))
         print *, "  MFLOPS:", mflops, "  time(s):", time_elapsed_s, error
     end block Rehearsal
     ! end Rehearsal measurment
@@ -108,23 +108,23 @@ program HimenoBMTxp_F90
         real(real32), parameter :: ExecTime = 60.0 !sec
 
         ! set the number of Iterations so that the execution time is roughly ExecTime sec
-        numItr = int(ExecTime/(time_elapsed_s/dble(numItr)))
+        num_iteration = int(ExecTime/(time_elapsed_s/dble(num_iteration)))
         print *, "Now, start the actual measurement process."
-        print *, "The loop will be excuted in", numItr, " times."
+        print *, "The loop will be excuted in", num_iteration, " times."
         print *, "This will take about one minute."
         print *, "Wait for a while."
 
         ! Jacobi iteration
         time_begin_s = get_current_time()
-        call jacobi(p, error, a, b, c, bnd, src, wrk, numItr)
+        call jacobi(p, error, a, b, c, bnd, src, wrk, num_iteration)
         time_end_s = get_current_time()
 
         ! compute benchmark results
         time_elapsed_s = time_end_s - time_begin_s
-        mflops = flop*FlopToMFlop/(time_elapsed_s/dble(numItr))
+        mflops = flop*FlopToMFlop/(time_elapsed_s/dble(num_iteration))
         score = mflops/MFlopsPenIII600
 
-        print *, " Loop executed for ", numItr, " times"
+        print *, " Loop executed for ", num_iteration, " times"
         print *, " Error :", error
         print *, " MFLOPS:", mflops, "  time(s):", time_elapsed_s
         print *, " Score based on Pentium III 600MHz :", score
@@ -221,7 +221,7 @@ contains
         end select
     end subroutine set_grid_size
 
-    subroutine jacobi(p, error, a, b, c, bnd, src, wrk, numItr)
+    subroutine jacobi(p, error, a, b, c, bnd, src, wrk, num_iteration)
         implicit none
         !&<
         real(real32),   intent(inout)   :: error
@@ -241,7 +241,7 @@ contains
             !! source term of Poisson equation
         real(real32),   intent(inout)   :: wrk(:, :, :)
             !! working area
-        integer(int32), intent(in)      :: numItr
+        integer(int32), intent(in)      :: num_iteration
             !! number of Jacobi iteration
         !&>
 
@@ -267,7 +267,7 @@ contains
         kmax = ubound(p, z) - 1
 
         !&<
-        Jacobi_iteration: do loop = 1, numItr
+        Jacobi_iteration: do loop = 1, num_iteration
             error = 0.0
             do k = 2, kmax-1
                 do j = 2, jmax-1
