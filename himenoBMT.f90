@@ -80,7 +80,7 @@ program HimenoBMTxp_F90
     print *, " mimax=", mimax, " mjmax=", mjmax, " mkmax=", mkmax
     print *, "  imax=", imax, "  jmax=", jmax, "  kmax=", kmax
 
-    dt = get_time_measurement_resolusion()
+    dt = get_time_measurement_resolution()
     print "(a,e12.5)", "Time measurement accuracy : ", dt
 
     ! Rehearsal measurment to estimate the number of iterations
@@ -140,14 +140,14 @@ program HimenoBMTxp_F90
 
 contains
 
-    function get_time_measurement_resolusion() result(time_interval)
+    function get_time_measurement_resolution() result(time_interval)
         implicit none
         integer(int32) :: count, count_rate, count_max
         real(real64) :: time_interval
 
         call system_clock(count, count_rate, count_max)
         time_interval = 1.0/dble(count_rate)
-    end function get_time_measurement_resolusion
+    end function get_time_measurement_resolution
 
     function get_current_time() result(current_time_s)
         implicit none
