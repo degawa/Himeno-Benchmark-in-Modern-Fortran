@@ -37,7 +37,6 @@ program HimenoBMTxp_F90
     integer(int32) ::  imax,  jmax,  kmax !&
 
     integer(int32) :: numItr
-    integer(int32) :: count, count_rate, count_max
     real(real32) :: flop, mflops, score, error
     real(real64) :: time_begin_s, time_end_s, time_elapsed_s, dt
 
@@ -81,8 +80,7 @@ program HimenoBMTxp_F90
     print *, " mimax=", mimax, " mjmax=", mjmax, " mkmax=", mkmax
     print *, "  imax=", imax, "  jmax=", jmax, "  kmax=", kmax
 
-    call system_clock(count, count_rate, count_max)
-    dt = 1.0/dble(count_rate)
+    dt = get_time_measurement_resolusion()
     print "(a,e12.5)", "Time measurement accuracy : ", dt
 
     ! Rehearsal measurment to estimate the number of iterations
@@ -141,6 +139,15 @@ program HimenoBMTxp_F90
     deallocate (wrk)
 
 contains
+
+    function get_time_measurement_resolusion() result(time_interval)
+        implicit none
+        integer(int32) :: count, count_rate, count_max
+        real(real64) :: time_interval
+
+        call system_clock(count, count_rate, count_max)
+        time_interval = 1.0/dble(count_rate)
+    end function get_time_measurement_resolusion
 
     function get_current_time() result(currentTime)
         implicit none
