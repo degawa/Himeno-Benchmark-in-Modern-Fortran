@@ -130,13 +130,15 @@ program HimenoBMTxp_F90
         print *, " Score based on Pentium III 600MHz :", score
     end block Actual
 
-    deallocate (p)
-    deallocate (a)
-    deallocate (b)
-    deallocate (c)
-    deallocate (bnd)
-    deallocate (src)
-    deallocate (wrk)
+    Finalize: block
+        deallocate (p)
+        deallocate (a)
+        deallocate (b)
+        deallocate (c)
+        deallocate (bnd)
+        deallocate (src)
+        deallocate (wrk)
+    end block Finalize
 
 contains
 
