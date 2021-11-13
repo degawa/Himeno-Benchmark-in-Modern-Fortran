@@ -304,11 +304,11 @@ contains
                                + src(i, j, k)
 
                         dp = (p_new*a(i, j, k, center) - p(i, j, k))*bnd(i, j, k)
-                        error = error + dp*dp
                         wrk(i, j, k) = p(i, j, k) + rlx*dp
                     end do
                 end do
             end do
+            error = sum( ((wrk(2:imax-1, 2:jmax-1, 2:kmax-1)-p(2:imax-1, 2:jmax-1, 2:kmax-1))/rlx)**2 )
             p(2:imax-1, 2:jmax-1, 2:kmax-1) = wrk(2:imax-1, 2:jmax-1, 2:kmax-1)
         end do Jacobi_iteration
         !&>
