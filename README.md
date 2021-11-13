@@ -12,7 +12,7 @@ In this program, global variables are eliminated, and some variable names and su
 
 ## Requirement
 Fortran 2008 or later.
-This program is compiled using Intel oneAPI ver. 2021.1 and gfortran ver. 10.3.0 for windows.
+This program is compiled and tested using Intel oneAPI ver. 2021.1 for windows, gfortran ver. 9.3.0 for ubuntu on wsl2, and gfortran ver. 9.2.0 for macos.
 
 ## Usage
 
@@ -24,6 +24,15 @@ This program is compiled using Intel oneAPI ver. 2021.1 and gfortran ver. 10.3.0
 
 ## Installation
 git clone or simply download .f90 file
+
+## Compiler Options
+
+|compiler|option|
+|:--|:--|
+|Intel oneAPI for windows|`/O3 /Qopenmp /Qparallel`|
+|gfortran|`-O3 -fopenmp -floop-parallelize-all -ftree-parallelize-loops=<N>`|
+
+For Intel oneAPI, The environment variable `OMP_NUM_THREADS` is used to controll the number of threads for parallel processing.
 
 ## Licence
 LGPL 2 or later
