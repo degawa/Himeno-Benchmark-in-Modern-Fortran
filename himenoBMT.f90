@@ -286,9 +286,9 @@ contains
         !&<
         Jacobi_iteration: do loop = 1, num_iteration
             error = 0.0
-            do k = 2, kmax-1
-                do j = 2, jmax-1
-                    do i = 2, imax-1
+            do concurrent(k=2:kmax-1)
+                do concurrent(j=2:jmax-1)
+                    do concurrent(i=2:imax-1)
                         p_new =  a(i, j, k, x )*p(i+1, j  , k  ) &
                                + a(i, j, k, y )*p(i  , j+1, k  ) &
                                + a(i, j, k, z )*p(i  , j  , k+1) &
