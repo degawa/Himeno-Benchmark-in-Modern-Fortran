@@ -157,12 +157,11 @@ contains
 
     !| get elapsed time in second from the reference time
     function get_current_time() result(current_time_s)
+        use :: omp_lib
         implicit none
-        integer(int32) :: count, count_rate, count_max
         real(real64) :: current_time_s
 
-        call system_clock(count, count_rate, count_max)
-        current_time_s = dble(count)/dble(count_rate)
+        current_time_s = omp_get_wtime()
     end function get_current_time
 
     !| read problem (grid size) from standard input and set the number of grid points according to the grid size
